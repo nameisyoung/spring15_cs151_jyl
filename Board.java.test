@@ -1,0 +1,106 @@
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Board {
+
+	public static final int PITS_PER_PLAYER = 6;
+	public static final int NUMBER_OF_PLAYERS = 2;
+
+	private static final int PIT = 0, MANCALA = 1;
+	private int pits[] = new int[NUMBER_OF_PLAYERS * (PITS_PER_PLAYER + 1)];
+	private int type[] = new int[NUMBER_OF_PLAYERS * (PITS_PER_PLAYER + 1)];
+	private int owner[] = new int[NUMBER_OF_PLAYERS * (PITS_PER_PLAYER + 1)];
+	private int turn;
+
+	public Board(int stones) {
+		for (int j = 0; j < NUMBER_OF_PLAYERS; j++) {
+			for (int i = 0; i < PITS_PER_PLAYER; i++) {
+				type[toInt(j, i)] = PIT;
+				owner[toInt(j, i)] = j;
+			}
+
+			type[toInt(j, PITS_PER_PLAYER)] = MANCALA;
+			owner[toInt(j, PITS_PER_PLAYER)] = j;
+		}
+
+		for (int i = 0; i < pits.length; i++)
+			if (type[i] == PIT)
+				pits[i] = stones;
+	}
+
+	private int toInt(int t, int p)
+	{
+		return t * (PITS_PER_PLAYER + 1) + p;
+	}
+
+	public void move(int pit) {
+		int cur = toInt(turn, pit);
+		int len = pits[cur];
+		pits[cur] = 0;
+
+		for (int i = 0; i < len; i++) {
+			cur = (cur + 1) % pits.length;
+
+			if (type[cur] == PIT || owner[cur] == turn)
+				pits[cur]++;
+			else
+				i--;
+		}
+		
+		if (type[cur] == MANCALA) {
+			;//turn = turn; 	//another round
+		} else {
+			if (pits[cur] == 1 && pits[(12 - cur)] != 0) {	//TODO remove magic
+				pits[toInt(turn, PITS_PER_PLAYER)] += pits[(12 - cur)];
+				pits[(12 - cur)] = 0;
+				
+				pits[toInt(turn, PITS_PER_PLAYER)] += pits[cur];
+				pits[cur] = 0;
+			} else
+				turn = (turn + 1) % NUMBER_OF_PLAYERS;
+		}
+	}
+	
+	public int getTurn()
+	{
+		return turn;
+	}
+
+	public String toString()
+	{
+		String res = "  ";
+		for (int i = 12; i >= 7; i--)
+			res+= pits[i] + " ";
+
+		res+= "\n" + pits[13] + " a b c d e f " + pits[6] + "\n  ";
+
+		for (int i = 0; i <= 5; i++)
+			res+= pits[i] + " ";
+
+		res+= "\n";
+		return res;
+	}
+
+	public static void main(String args[])
+	{
+		Board b = new Board(4);
+		System.err.print(b);
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));;
+
+		while(true) {
+			try {
+				System.err.println("Player " + (b.getTurn()+1) +":");
+				int rc = Integer.parseInt(in.readLine());
+				System.err.println(rc);
+				b.move(rc);
+				System.err.print(b);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+}
