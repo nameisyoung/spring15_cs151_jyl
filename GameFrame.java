@@ -8,6 +8,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 
 //import other.BlueSquareFormatter;
 //import other.RedRoundFormatter;
@@ -51,82 +53,115 @@ public class GameFrame
         
         final JPanel panel = new JPanel();        
 
-        JLabel label = new JLabel("Select style and number of stones");
-        panel.add(label);
+//        JLabel label = new JLabel("Select style and number of stones");
+//        panel.add(label);
+//        
+//        //strategy pattern buttons
+//        JButton redButton3 = new JButton("Red, round, 3 stones");
+//        JButton redButton4 = new JButton("Red, round, 4 stones");
+//
+//        redButton3.addActionListener(new ActionListener()
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                model.setNumStones(3);
+//                model.setCurrentState("STARTED");
+//
+//                //set to red squares
+//                buttonsVisible = false;
+//                setButtonVisible(false, panel);
+//                mancalaComponent.setFormatter(new RedRoundFormatter());
+//                setButtonVisible(true, lowerPanel);
+//            }
+//        });
+//        
+//        redButton4.addActionListener(new ActionListener()
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                model.setNumStones(4);
+//                model.setCurrentState("STARTED");
+//                //set to red squares
+//                buttonsVisible = false;
+//                setButtonVisible(false, panel);
+//                mancalaComponent.setFormatter(new RedRoundFormatter());
+//                setButtonVisible(true, lowerPanel);
+//            }
+//        });
+//        
+//        JButton blueButton3 = new JButton("Blue, square, 3 stones");
+//        JButton blueButton4 = new JButton("Blue, square, 4 stones");
+//
+//        blueButton3.addActionListener(new ActionListener()
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                model.setNumStones(3);
+//                model.setCurrentState("STARTED");
+//                //set to blue circles
+//                buttonsVisible = false;
+//                setButtonVisible(false, panel);
+//                mancalaComponent.setFormatter(new BlueSquareFormatter());
+//                setButtonVisible(true, lowerPanel);
+//            }
+//        });
+//        
+//        blueButton4.addActionListener(new ActionListener()
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                model.setNumStones(4);
+//                model.setCurrentState("STARTED");
+//                //set to blue circles
+//                buttonsVisible = false;
+//                setButtonVisible(false, panel);
+//                mancalaComponent.setFormatter(new BlueSquareFormatter());
+//                setButtonVisible(true, lowerPanel);
+//            }
+//        });
+//        
+//        panel.add(redButton3);
+//        panel.add(redButton4);
+//
+//        panel.add(blueButton3);
+//        panel.add(blueButton4);
         
-        //strategy pattern buttons
-        JButton redButton3 = new JButton("Red, round, 3 stones");
-        JButton redButton4 = new JButton("Red, round, 4 stones");
-
-        redButton3.addActionListener(new ActionListener()
+        JLabel stoneLabel = new JLabel("Enter number of stones and click start button (You can choose only 3 or 4): ");
+        panel.add(stoneLabel);
+        
+        JTextField stoneTextfield = new JTextField("3");
+        panel.add(stoneTextfield);
+        
+        
+        JButton startButton = new JButton("Start"); 
+        
+        startButton.addActionListener(new ActionListener()
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                model.setNumStones(3);
-                model.setCurrentState("STARTED");
-
-                //set to red squares
-                buttonsVisible = false;
-                setButtonVisible(false, panel);
-                mancalaComponent.setFormatter(new RedRoundFormatter());
-                setButtonVisible(true, lowerPanel);
-            }
+        	@Override
+        	public void actionPerformed(ActionEvent e)
+        	{
+        		String numStone = stoneTextfield.getText();
+        		if(checkStones(getNumStones(numStone)) == false)
+        		{
+        			errStonePopup();
+        		}
+        		else
+	        	{
+	        		model.setNumStones(getNumStones(numStone));		// changed. 4 -> getNumStones(numStone)
+	        		model.setCurrentState("STARTED");
+	        		buttonsVisible = false;
+	        		setButtonVisible(false, panel);
+	        		//mancalaComponent.setFormatter(new RedRoundFormatter());
+	        		setButtonVisible(true, lowerPanel);
+	        	}
+        	}
         });
         
-        redButton4.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                model.setNumStones(4);
-                model.setCurrentState("STARTED");
-                //set to red squares
-                buttonsVisible = false;
-                setButtonVisible(false, panel);
-                mancalaComponent.setFormatter(new RedRoundFormatter());
-                setButtonVisible(true, lowerPanel);
-            }
-        });
-        
-        JButton blueButton3 = new JButton("Blue, square, 3 stones");
-        JButton blueButton4 = new JButton("Blue, square, 4 stones");
-
-        blueButton3.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                model.setNumStones(3);
-                model.setCurrentState("STARTED");
-                //set to blue circles
-                buttonsVisible = false;
-                setButtonVisible(false, panel);
-                mancalaComponent.setFormatter(new BlueSquareFormatter());
-                setButtonVisible(true, lowerPanel);
-            }
-        });
-        
-        blueButton4.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                model.setNumStones(4);
-                model.setCurrentState("STARTED");
-                //set to blue circles
-                buttonsVisible = false;
-                setButtonVisible(false, panel);
-                mancalaComponent.setFormatter(new BlueSquareFormatter());
-                setButtonVisible(true, lowerPanel);
-            }
-        });
-        
-        panel.add(redButton3);
-        panel.add(redButton4);
-
-        panel.add(blueButton3);
-        panel.add(blueButton4);
+        panel.add(startButton);
         
         lowerPanel.add(undo);
         frame.setSize(1000, 750);
@@ -137,7 +172,50 @@ public class GameFrame
         frame.add(lowerPanel, BorderLayout.SOUTH);
         setButtonVisible(false, lowerPanel);
         frame.setVisible(true);
+        
     }
+    
+    public void errStonePopup()
+    {
+    	JOptionPane.showMessageDialog(null, "Error: Check the number of stones.");
+    }
+    
+    /**
+     * converts string to integer
+     * @param String.numStone
+     * @return Integer.numStone
+     */
+    public int getNumStones(String numStone)
+    {
+    	if(numStone.isEmpty()){
+    		return 0;
+    	}
+    	else{
+    		return Integer.parseInt(numStone);
+    	}
+    }
+    
+    
+    /**
+     * checks the value of stones is correct
+     * true: 3 or 4
+     * false: other
+     * @param numStone
+     * @return 
+     */
+    public boolean checkStones(int numStone)
+    {
+    	if(numStone == 3 || numStone == 4)
+    	{
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    	
+    }
+    
     
     /**
      * sets the buttons on the frame visible or not depending on if the game is in session
@@ -152,6 +230,7 @@ public class GameFrame
             mancalaComponent.startGame();
         }
     }
+    
     private boolean buttonsVisible;
     private MancalaComponent mancalaComponent;
 }
